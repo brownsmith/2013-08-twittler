@@ -10,24 +10,64 @@
       $(document).ready(function(){
         var $body = $('body');
         $body.html('');
+        
+        var getUserStream = function( username ) {
+        	clearInterval( interval );
+	        var index = streams.users[username].length - 1;
+	        while( index >= 0 ) {
+		        var tweet = streams.users[username][index];
+		        var $tweet = $('<div class="tweet"></div>')
+							.text(': ' + tweet.message + "  (" + tweet.created_at.toLocaleString() + ")")
+							.appendTo($body);
+				var $user = $('<a href="#'+ username +'" class="user"></a>')
+							.text('@' + username )
+							.prependTo($tweet);
+				index--;
+	        }
+	        
+	        var $title = $('<h1></h1>')
+	        	.text(username + "'s Tweets:")
+	        	.prependTo($body);
+	       
+	        var $returnLink = $('<br /><a href="#" class="return"></a>')
+	        	.text('Return to your Twittler stream ->')
+	        	.appendTo($body);
 
-		// wrapped starter code in a function
-		// get new elements in streams.home
-		var updateStreamsHome = function() {
-			var $currentIndex = $('.tweet').length 
-			var index = streams.home.length - 1;
-			while( index >= $currentIndex ){
-				var tweet = streams.home[index];
-				var $tweet = $('<div class="tweet"></div>');
-				$tweet.text('@' + tweet.user + ': ' + tweet.message + "  (" + tweet.created_at.toLocaleString() + ")");
-				$tweet.appendTo($body);
-				index -= 1;
-			}
+	        $returnLink.on('click', function(event) {
+        		event.preventDefault();
+        		$body.html('');
+        		updateStream();
+        		interval = setInterval( updateStream, 3000);
+	        });
+        }
+
+		var updateStream = function() {
+			var $currentIndex = $('.tweet').length;
+			var index = streams.home.length;
+			//var $tweetContainer = $('<div></div>').addClass('tweetContainer').prependTo($body);
+			while( index > $currentIndex ){
+				var tweet = streams.home[ $currentIndex ],
+					user = tweet.user;
+				var $tweet = $('<div class="tweet" id="'+$currentIndex+'"></div>')
+							.text(': ' + tweet.message + "  (" + tweet.created_at.toLocaleString() + ")")
+							.prependTo($body);
+				var $user = $('<a href="#" class="user"></a>')
+							.text('@' + user)
+							.prependTo($tweet);
+				$currentIndex++;
+			}	
+			
+			$('.user').on('click', function( event ) {
+				event.preventDefault();
+				clearInterval( interval );
+				$body.html('');
+				getUserStream( streams.home[ $(this).closest('.tweet').attr('id') ].user );
+			});
+		
 		}
 		
-		// keep stream fresh
-        setInterval( updateStreamsHome, 1500);
-
+		//updateStream();
+		var interval = setInterval( updateStream, 3000);	
       });
 
     </script>

@@ -11,15 +11,22 @@
         var $body = $('body');
         $body.html('');
 
-        var index = streams.home.length - 1;
-        while(index >= 0){
-          var tweet = streams.home[index];
-          var $tweet = $('<div></div>');
-          $tweet.text('@' + tweet.user + ': ' + tweet.message);
-          $tweet.appendTo($body);
-          index -= 1;
-        }
-
+		// wrapped starter code in a function
+		// get new elements in streams.home
+		var updateStreamsHome = function() {
+			var $currentIndex = $('.tweet').length 
+			var index = streams.home.length - 1;
+			while( index >= $currentIndex ){
+				var tweet = streams.home[index];
+				var $tweet = $('<div class="tweet"></div>');
+				$tweet.text('@' + tweet.user + ': ' + tweet.message);
+				$tweet.appendTo($body);
+				index -= 1;
+			}
+		}
+		
+		// keep stream fresh
+        setInterval( updateStreamsHome, 1500);
       });
 
     </script>
